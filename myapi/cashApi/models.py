@@ -45,6 +45,7 @@ class Sale(models.Model):
     class Meta:
         db_table = 'sale'
 
+    sold_at = models.DateTimeField()
     total = models.FloatField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE) 
     products = models.ManyToManyField(Product, on_delete=models.CASCADE) 
