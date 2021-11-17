@@ -48,7 +48,7 @@ class Sale(models.Model):
     sold_at = models.DateTimeField()
     total = models.FloatField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE) 
-    products = models.ManyToManyField(Product, on_delete=models.CASCADE) 
+    products = models.ManyToManyField(Product) 
     
     def __str__(self):
         return "Total sale %{total}s of customer: %{customer}s", {

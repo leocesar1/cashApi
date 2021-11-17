@@ -14,8 +14,40 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+
+urlpatterns += [
+    path('api_auth/', include('rest_auth.urls')),
+    path('api_auth/registration/',      include('rest_auth.registration.urls'))
+]
+# for registration, login and logout
+# Registration ###################################################
+# [post] /api_auth/registration/
+# json_data = {
+#    'username': 'username',
+#    'email': 'email@email.com',
+#    'password1': 'password',
+#    'password2': 'passwordConfirmation',
+# }
+# Response = {
+#    "key": Token
+# }
+# Login ###################################################
+# [post] /api_auth/login/
+# json_data = {
+#    'username': 'username',
+#    'password': 'password'
+# }
+# Response = {
+#    "key": Token
+# }
+# Logout ###################################################
+# [post] /api_auth/logout/
+# header = {
+#    'Authorization': 'Token <Token>'
+# }
