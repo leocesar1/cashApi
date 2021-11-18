@@ -1,10 +1,6 @@
+from django.db.models.query import QuerySet
 from rest_framework import serializers
-from .models import Product, Customer, Sale
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
+from .models import Customer, Sale
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,7 +8,9 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SaleSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(many=False, read_only=False)
     class Meta:
         model = Sale
         fields = '__all__'
+        # depth = 1
 

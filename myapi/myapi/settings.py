@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth',
     'rest_auth.registration',
+    'cpf_field',
 ]
 
 SITE_ID = 1

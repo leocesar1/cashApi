@@ -1,3 +1,4 @@
 /myenv
 models
 tokenKey.txt
+/myapi/db.sqlite3
