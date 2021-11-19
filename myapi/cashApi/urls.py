@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     url(r'^cashApi/customer/$', views.CustomerList.as_view(), name='customer-list'),
     url(r'^cashApi/sale/$', views.SaleList.as_view(), name='sale-list'),
-    url(r'^cashApi/product/$', views.SaleList.as_view(), name='product-list'),
+    url(r'^cashApi/product/$', views.ProductList.as_view(), name='product-list'),
     ]

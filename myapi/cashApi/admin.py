@@ -4,14 +4,13 @@ from django import forms
 # Register your models here.
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'value', 'qty')
+    list_display = ('id', 'type', 'price', 'qty')
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'document')
 
 class SaleAdmin(admin.ModelAdmin):
-    list_display = ('id','customer', 
-    # 'products'
+    list_display = ('id','customer',
     )
 
 admin.site.register(Customer, CustomerAdmin)
