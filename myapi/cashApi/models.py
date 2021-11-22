@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from datetime import datetime
 
+import json
+
 class Product(models.Model):
 
     class Meta:
@@ -13,21 +15,29 @@ class Product(models.Model):
 
     def clean(self):
         if self.price > 0:
-            return self.price
+            self.price = round(self.price,2)
+            if self.cashback == False:
+                raise ValidationError('Não foi possível aplicar o programa de cashback neste produto!')
+            else:
+                self.cashback = round(self.cashback,2)
+            return self
         else:
             raise ValidationError('O preço do produto não pode ser negativo!')
+
+        
         
     choices_type = [
-        (0, 'A'),
-        (1, 'B'),
-        (2, 'C')
+        ('A', "A"),
+        ('B', "B"),
+        ('C', "C")
     ]
 
-    type = models.PositiveSmallIntegerField(
+    type = models.CharField(max_length=1,
         choices=choices_type,
     )
-    price = models.FloatField()
+    price = models.FloatField(default=0.00,)
     qty = models.PositiveSmallIntegerField()
+    cashback = models.FloatField(default=0.00)
 
     
     def __str__(self):
@@ -50,13 +60,17 @@ class Sale(models.Model):
     class Meta:
         db_table = 'sale'
 
-    sold_at = models.DateField(default= datetime.now(),  null=True )
+    sold_at = models.DateField(default= datetime.now())
     total = models.FloatField()
-    customer = models.TextField(default = '{"name": "", "document": ""}')
+    customer = models.JSONField(default = {"name": "", "document": ""})
     customer_bd = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    products = models.TextField(default = "") 
-    products_bd = models.ManyToManyField(Product,) 
+    products = models.JSONField(default = "") 
+    products_bd = models.ManyToManyField(Product,)
+    cashback = models.FloatField(default = 0.00)
     
     def __str__(self):
-        template =  "Total sale "+ str(self.total)+" of customer: "#+self.customer_bd.document
-        return template
+        data = {
+            "document": self.customer_bd.document,
+            "cashback": self.cashback
+        }
+        return json.dumps(data)

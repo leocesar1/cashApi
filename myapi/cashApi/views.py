@@ -15,6 +15,8 @@ class SaleList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
 
+
+    # only for debug --------------------------------------
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
