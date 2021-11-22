@@ -3,7 +3,6 @@ from django.db import models
 from cpf_field.models import CPFField # import cpf validator
 
 from django.core.exceptions import ValidationError
-from django.utils.timezone import now
 from datetime import datetime
 
 import json
@@ -24,9 +23,7 @@ class Product(models.Model):
             # Errors in cashback validation are performed locally in the function
             if self.cashback == False:
                 raise ValidationError('Não foi possível aplicar o programa de cashback neste produto!')
-            else:
-                # Cashback ​​will be rounded
-                self.cashback = round(self.cashback,2)
+            
             return self
         else:
             raise ValidationError('O preço do produto não pode ser negativo!')
@@ -80,11 +77,11 @@ class Sale(models.Model):
     class Meta:
         db_table = 'sale'
 
-    sold_at = models.DateTimeField(default= datetime.now())
+    sold_at = models.DateTimeField(default= datetime.now(),)
     total = models.FloatField()
-    customer = models.JSONField(default = {"name": "", "document": ""})
+    customer = models.JSONField()
     customer_bd = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    products = models.JSONField(default = "") 
+    products = models.JSONField() 
     products_bd = models.ManyToManyField(Product,)
     cashback = models.FloatField(default = 0.00)
     
