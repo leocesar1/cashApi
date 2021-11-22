@@ -9,23 +9,29 @@ from datetime import datetime
 import json
 
 class Product(models.Model):
-
+    # In this class, all products are stored individually,
+    # as well as their respective cachebacks in a separate table.
     class Meta:
         db_table = 'product'
 
     def clean(self):
+        # Initial validations
+        # Price must not be zero or negative
         if self.price > 0:
+            # Values ​​will be rounded
             self.price = round(self.price,2)
+
+            # Errors in cashback validation are performed locally in the function
             if self.cashback == False:
                 raise ValidationError('Não foi possível aplicar o programa de cashback neste produto!')
             else:
+                # Cashback ​​will be rounded
                 self.cashback = round(self.cashback,2)
             return self
         else:
             raise ValidationError('O preço do produto não pode ser negativo!')
 
-        
-        
+    # Possibilities for the type of product      
     choices_type = [
         ('A', "A"),
         ('B', "B"),
@@ -35,8 +41,14 @@ class Product(models.Model):
     type = models.CharField(max_length=1,
         choices=choices_type,
     )
+
+    # Unit price
     price = models.FloatField(default=0.00,)
+
+    # Product quantity
     qty = models.PositiveSmallIntegerField()
+
+    # Cashback amount applied to the product
     cashback = models.FloatField(default=0.00)
 
     
