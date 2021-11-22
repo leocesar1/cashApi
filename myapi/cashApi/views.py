@@ -18,7 +18,7 @@ class ProductList(generics.ListCreateAPIView):
 class SaleList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     # only for debug --------------------------------------
     def get(self, request, *args, **kwargs):
