@@ -1,12 +1,14 @@
 from rest_framework import serializers
-# from rest_framework import validators
 from .models import Customer, Sale, Product
 from datetime import datetime
 import pytz
 import requests
 
-
 def getCashback(typeProduct, totalValue):
+    # This function determines the cashback according to the implemented policy
+    # Type == "A"  ===>>>> 5%
+    # Type == "B"  ===>>>> 10%
+    # Type == "C"  ===>>>> 15%
     if typeProduct == "A":
         return round(totalValue*0.05, 2)
     elif typeProduct == "B":
@@ -16,18 +18,26 @@ def getCashback(typeProduct, totalValue):
     else:
         return False
 
+def senderToApiMT(data):
+    return requests.post(
+        url = 'https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback',
+        data = data
+    )
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('qty', 'price', 'type')
-
+        
+    # Product price must be greater than zero
     def validate_price(self, value):
         if value > 0:
             return value
         raise serializers.ValidationError('Não é possível inserir preços negativos!')
 
+    # The product type must be listed as one of the options
     def validate_type(self, value):
-        if value >= 0 and value < 3:
+        if value in [c[1] for c in Product.type.field.choices]:
             return value
         raise serializers.ValidationError('Tipo de produto não cadastrado!')
     
@@ -38,12 +48,17 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class SaleSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Sale
         fields = 'customer', 'products', 'sold_at', 'total'
-        # depth = 1
+        depth = 1
+        
 
     def validate(self, data):
+        """
+        Validation of user information
+        """
         try:
             jsonCustomer = data['customer']
             customer = Customer.objects.filter(document = jsonCustomer['document'])[0]
@@ -54,6 +69,9 @@ class SaleSerializer(serializers.ModelSerializer):
         except:
             raise serializers.ValidationError('Falha ao incluir usuário!')
 
+        """
+        Validation of products information
+        """
         try:
             jsonProducts = data['products']
             arrayProducts = []
@@ -63,32 +81,36 @@ class SaleSerializer(serializers.ModelSerializer):
                 product.save()
                 arrayProducts.append(product.pk)
                 cashbackSale.append(product.cashback)
-                print(product.cashback)
             data['products_bd'] = arrayProducts
         except:
             raise serializers.ValidationError('Falha ao incluir os produtos!')
 
+        """
+        Verification of the sum of values
+        """
         sum_total = sum(item['qty'] * float(item['value']) for item in jsonProducts)
         if data['total'] == sum_total:
             data['cashback'] = sum(item for item in cashbackSale)
-            print(data['cashback'])
         else:
             raise serializers.ValidationError('O valor total informado está errado!')
 
+        """
+        Validation of purchase date.
+        """
         if data['sold_at'] > pytz.utc.localize(datetime.now()):
             raise serializers.ValidationError('Não é possível inserir uma compra com data futura.')
         
+
+        """
+        Submission to the MaisTodos API
+        """
         try:
-            senderToApiMT = requests.post(
-                url = 'https://5efb30ac80d8170016f7613d.mockapi.io/api/mock/Cashback',
-                data = {'document': customer.document, 'cashback': data['cashback']}
-            )
-            print(senderToApiMT)
+            data = {'document': customer.document, 'cashback': data['cashback']}
+        
+            message = senderToApiMT(data)
+            print(message)
         except:
             raise serializers.ValidationError('Não foi possível enviar o cashback para a API do MaisTodos.')
-
-
-        # send data to chashback
 
         return data
     

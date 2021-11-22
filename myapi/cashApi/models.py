@@ -77,11 +77,16 @@ class Sale(models.Model):
     class Meta:
         db_table = 'sale'
 
+
     sold_at = models.DateTimeField(default= datetime.now(),)
     total = models.FloatField()
     customer = models.JSONField()
+    
+    # Include customer data in customer database
     customer_bd = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     products = models.JSONField() 
+    
+    # Include products data in product database
     products_bd = models.ManyToManyField(Product,)
     cashback = models.FloatField(default = 0.00)
     

@@ -86,7 +86,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_EMAIL_REQUIRED = False # only for tests
+REST_SESSION_LOGIN = True
+ACCOUNT_EMAIL_REQUIRED = True # False only for tests
 ACCOUNT_EMAIL_VERIFICATION = "none" # only for tests
 ACCOUNT_AUTHENTICATION_METHOD = "username_email" # only for tests
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
@@ -149,7 +150,13 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     )
+}
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': 'login',
+    'LOGOUT_URL': 'logout',
 }
