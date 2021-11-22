@@ -53,6 +53,11 @@ class ProductModelClass(TestCase):
         field_label = cashback._meta.get_field('cashback').verbose_name
         self.assertEquals(field_label, 'cashback')
 
+    def test_inclusion_product(self):
+        # from django.test.client import Client
+        # client = Client()
+        response = self.client.get('/cashApi/product')
+        print(response.status_code)
 
     def setUp(self):
         print("setUp: Running to setup clean data.")

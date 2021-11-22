@@ -87,9 +87,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 REST_SESSION_LOGIN = True
-ACCOUNT_EMAIL_REQUIRED = True # False only for tests
-ACCOUNT_EMAIL_VERIFICATION = "none" # only for tests
-ACCOUNT_AUTHENTICATION_METHOD = "username_email" # only for tests
+ACCOUNT_EMAIL_REQUIRED = False 
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
 WSGI_APPLICATION = 'myapi.wsgi.application'
@@ -153,10 +153,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    )
-}
-
-SWAGGER_SETTINGS = {
-    'LOGIN_URL': 'login',
-    'LOGOUT_URL': 'logout',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }

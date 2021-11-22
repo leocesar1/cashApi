@@ -53,7 +53,6 @@ class SaleSerializer(serializers.ModelSerializer):
         model = Sale
         fields = 'customer', 'products', 'sold_at', 'total'
         depth = 1
-        
 
     def validate(self, data):
         """
