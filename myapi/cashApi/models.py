@@ -57,10 +57,16 @@ class Product(models.Model):
         
 
 class Customer(models.Model):
+    # In this class, all customers are registered individually, 
+    # with a view to future consultations.
+
     class Meta:
         db_table = 'customers'
 
+    # Document corresponds to the CPF.
+    # For validation we have included the CPFField library.
     document = CPFField('cpf', unique=True)
+
     name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -68,11 +74,13 @@ class Customer(models.Model):
         
 
 class Sale(models.Model):
-
+    # In this class, all ERP requests from the user are received.
+    # Once received, the data is treated and separated in the CUSTOMER and PRODUCT tables
+    
     class Meta:
         db_table = 'sale'
 
-    sold_at = models.DateField(default= datetime.now())
+    sold_at = models.DateTimeField(default= datetime.now())
     total = models.FloatField()
     customer = models.JSONField(default = {"name": "", "document": ""})
     customer_bd = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
